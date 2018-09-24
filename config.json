@@ -1,0 +1,63 @@
+{
+  "name": "Well Birthday Reminder",
+
+  "namespace":"Stanford\\WellBirthday",
+
+  "description": "Well Birthday Reminders",
+
+  "authors": [
+    {
+      "name": "Andrew Martin",
+      "email": "andy123@stanford.edu",
+      "institution": "Stanford University"
+    },
+    {
+      "name": "Irvin Szeto",
+      "email": "irvins@stanford.edu",
+      "institution": "Stanford University"
+    }
+  ],
+
+  "permissions": [
+  ],
+
+  "crons": [
+    {
+      "cron_name": "em-proj-well-birthday-reminder",
+      "cron_description": "Cron uses the ScheduledCronTrait to ensure delivery at a specified time",
+      "method": "startCron",
+      "cron_frequency": "60",
+      "cron_max_run_time": "300"
+    }
+  ],
+
+  "links": {
+    "control-center": [
+      {
+        "name": "Well Birthday",
+        "icon": "gear",
+        "url": "test.php"
+      }
+    ],
+    "project": [
+    ]
+  },
+
+  "system-settings": [
+    {
+      "key": "enable-system-debug-logging",
+      "name": "<b>Enable Debug Logging (system-wide)</b>",
+      "required": false,
+      "type": "checkbox"
+    }
+  ],
+
+  "project-settings": [
+    {
+      "key": "enable-project-debug-logging",
+      "name": "<b>Enable Debug Logging</b>",
+      "required": false,
+      "type": "checkbox"
+    }
+  ]
+}
