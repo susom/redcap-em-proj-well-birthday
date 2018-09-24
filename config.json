@@ -26,8 +26,8 @@
       "cron_name": "em-proj-well-birthday-reminder",
       "cron_description": "Cron uses the ScheduledCronTrait to ensure delivery at a specified time",
       "method": "startCron",
-      "cron_frequency": "60",
-      "cron_max_run_time": "300"
+      "cron_frequency": "3600",
+      "cron_max_run_time": "600"
     }
   ],
 
@@ -58,6 +58,13 @@
       "name": "<b>Enable Debug Logging</b>",
       "required": false,
       "type": "checkbox"
+    },
+    {
+      "key": "email-body",
+      "name": "<b>Email Body</b>",
+      "required": true,
+      "type": "textarea"
     }
+
   ]
 }

@@ -4,6 +4,10 @@ namespace Stanford\WellBirthday;
 // Add trait
 require_once "emLoggerTrait.php";
 
+use ExternalModules\ExternalModules;
+use REDCap;
+
+
 class WellBirthday extends \ExternalModules\AbstractExternalModule
 {
     use emLoggerTrait;
@@ -13,14 +17,28 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
      * This is the cron task specified in the config.json
      */
     public function startCron() {
-        $start_times = array("08:00", "15:30");
-        $delta_in_min = 3;
+        $start_times = array("08:00");
+        $delta_in_min = 90;
 
         $ready = $this->timeForCron(__FUNCTION__, $start_times, $delta_in_min);
 
         if ($ready) {
             // DO YOUR CRON TASK
             $this->emDebug("DoCron");
+
+            $db_enabled = ExternalModules::getEnabledProjects($this->PREFIX);
+
+            while ($proj = db_fetch_assoc($db_enabled)) {
+                $pid = $proj['project_id'];
+                $this->emDebug("Processing " . $pid);
+
+                //REDCap::getData($pid, 'json')
+
+
+            }
+
+
+
         }
     }
 
