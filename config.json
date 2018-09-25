@@ -26,7 +26,7 @@
       "cron_name": "em-proj-well-birthday-reminder",
       "cron_description": "Cron uses the ScheduledCronTrait to ensure delivery at a specified time",
       "method": "startCron",
-      "cron_frequency": "3600",
+      "cron_frequency": "59",
       "cron_max_run_time": "600"
     }
   ],
