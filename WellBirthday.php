@@ -3,6 +3,7 @@ namespace Stanford\WellBirthday;
 
 // Add trait
 require_once "emLoggerTrait.php";
+require_once "class.mail.php";
 
 use ExternalModules\ExternalModules;
 use REDCap;
@@ -32,13 +33,31 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                 $pid = $proj['project_id'];
                 $this->emDebug("Processing " . $pid);
 
-                //REDCap::getData($pid, 'json')
+                $birthday_accounts = REDCap::getData('array', null, array('id'
+                                            ,'core_birthday_m'
+                                            ,'core_birthday_d'
+                                            ,'portal_firstname'
+                                            ,'portal_lastname'
+                                            ,'portal_email'
+                                            ), null, null, false, true, false
+                                            , '[core_birthday_m] = "' . Date("n") . '" and [core_birthday_d] = "' . Date("j") . '"'
+                                            , true, true ); 
 
+                foreach($birthday_accounts as $user){
+                    $user               = array_shift($user);
+                    $uid                = $user["id"];
+                    $email              = $user["portal_email"];
+                    $fname              = $user["portal_firstname"];
+                    $lname              = $user["portal_lastname"];
 
+                    
+                    $hooks  = array(
+                     "searchStrs" => array("#FIRSTNAME#"),
+                     "subjectStrs" => array($fname)
+                    );
+                    emailReminder($fname, $uid, $hooks, $email,$module->getProjectSetting("email-body"),"WELL wishes you a happy birthday!");
+                }
             }
-
-
-
         }
     }
 
@@ -86,4 +105,30 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
         return false;
     }
 
+}
+
+// Used by UserPie Email
+function replaceDefaultHook($str) {
+    global $default_hooks,$default_replace;
+    return (str_replace($default_hooks,$default_replace,$str));
+}
+
+function emailReminder($fname,$uid,$hooks,$email,$email_template, $email_subject, $email_msg){
+    $mail = new userPieMail();
+
+    // Build the template - Optional, you can just use the sendMail function to message
+    if(!is_null($email_template) && !$mail->newTemplateMsg($email_template,$hooks)) {
+        print_r("error : building template");
+     // logIt("Error building actition-reminder email template", "ERROR");
+    } else {
+     // Send the mail. Specify users email here and subject.
+     // SendMail can have a third parementer for message if you do not wish to build a template.
+     if(!is_null($email_msg) && !$mail->sendMail($email,$email_subject,$email_msg)) {
+        print_r("error : sending email");
+        // logIt("Error sending email: " . print_r($mail,true), "ERROR");
+     } else {
+        print_r("Email sent to $fname ($uid) @ $email");
+        // Update email_act_sent_ts
+     }
+    }
 }
