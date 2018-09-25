@@ -4,3 +4,4 @@ namespace Stanford\WellBirthday;
 
 echo "Hello";
 
+$module->emDebug("Here");
