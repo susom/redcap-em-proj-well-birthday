@@ -40,6 +40,11 @@
       }
     ],
     "project": [
+      {
+        "name": "BIRTHDAY CRON TEST",
+        "icon": "gear",
+        "url": "test.php"
+      }
     ]
   },
 

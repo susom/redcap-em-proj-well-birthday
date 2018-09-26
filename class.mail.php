@@ -4,6 +4,8 @@
 	http://userpie.com
 	
 */
+namespace Stanford\WellBirthday;
+
 $debug_mode 		= true;
 $mail_templates_dir = "./";
 
@@ -13,46 +15,33 @@ class userPieMail {
 	public $contents = NULL;
 
 	//Function used for replacing hooks in our templates
-	public function newTemplateMsg($template,$additionalHooks)
-	{
+	public function newTemplateMsg($template,$additionalHooks){
 		global $mail_templates_dir,$debug_mode;
 	
 		// $this->contents = file_get_contents($mail_templates_dir.$template);
 		$this->contents = $template;
 
 		//Check to see we can access the file / it has some contents
-		if(!$this->contents || empty($this->contents))
-		{
-			if($debug_mode)
-			{
-				if(!$this->contents)
-				{ 
+		if(!$this->contents || empty($this->contents)){
+			if($debug_mode){
+				if(!$this->contents){ 
 					echo lang("MAIL_TEMPLATE_DIRECTORY_ERROR",array(getenv("DOCUMENT_ROOT")));
-							
 					die(); 
-				}
-				else if(empty($this->contents))
-				{
+				}else if(empty($this->contents)){
 					echo lang("MAIL_TEMPLATE_FILE_EMPTY"); 
-					
 					die();
 				}
 			}
-		
 			return false;
-		}
-		else
-		{
+		}else{
 			//Replace default hooks
 			$this->contents = replaceDefaultHook($this->contents);
-		
 			//Replace defined / custom hooks
 			$this->contents = str_replace($additionalHooks["searchStrs"],$additionalHooks["subjectStrs"],$this->contents);
 
 			//Do we need to include an email footer?
 			//Try and find the #INC-FOOTER hook
-			if(strpos($this->contents,"#INC-FOOTER#") !== FALSE)
-			{
+			if(strpos($this->contents,"#INC-FOOTER#") !== FALSE){
 				$footer = file_get_contents($mail_templates_dir."email-footer.txt");
 				if($footer && !empty($footer)) $this->contents .= replaceDefaultHook($footer); 
 				$this->contents = str_replace("#INC-FOOTER#","",$this->contents);
@@ -95,11 +84,15 @@ function emailReminder($fname,$uid,$hooks,$email,$email_template, $email_subject
 	} else {
 	 // Send the mail. Specify users email here and subject.
 	 // SendMail can have a third parementer for message if you do not wish to build a template.
+
+	
+	 $email_msg = str_replace($hooks["searchStrs"],$hooks["subjectStrs"],$email_template);
+
 	 if(!is_null($email_msg) && !$mail->sendMail($email,$email_subject,$email_msg)) {
 	 	print_r("error : sending email");
 	    // logIt("Error sending email: " . print_r($mail,true), "ERROR");
 	 } else {
-	 	print_r("Email sent to $fname ($uid) @ $email");
+	 	print_r("Email sent to $fname ($uid) @ $email <br>");
 	    // Update email_act_sent_ts
 	 }
 	}
