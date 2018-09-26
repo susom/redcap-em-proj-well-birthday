@@ -21,7 +21,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
         $cron_freq = 60;
 
         $this->emDebug("Starting Cron : Check if its in the right time range");
-        if ($this->timeForCron(__FUNCTION__, $start_times, $cron_freq) || true) {
+        if ($this->timeForCron(__FUNCTION__, $start_times, $cron_freq)) {
             // DO YOUR CRON TASK
             $this->emDebug("DoCron");
 
