@@ -41,9 +41,9 @@
     ],
     "project": [
       {
-        "name": "BIRTHDAY CRON TEST",
+        "name": "Run Birthday Check for Today",
         "icon": "gear",
-        "url": "test.php"
+        "url": "action.php"
       }
     ]
   },
