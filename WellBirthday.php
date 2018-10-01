@@ -3,10 +3,11 @@ namespace Stanford\WellBirthday;
 
 // Load trait
 require_once "emLoggerTrait.php";
-require_once "class.mail.php";
+// require_once "class.mail.php";
 
 use ExternalModules\ExternalModules;
 use REDCap;
+use Message;
 
 
 class WellBirthday extends \ExternalModules\AbstractExternalModule
@@ -18,10 +19,11 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
      */
     public function startCron() {
         $start_times = array("08:00");
-        $cron_freq = 60;
+        $run_days    = array("mon","tue","wed","thu","fri","sat","sun");
+        $cron_freq   = 60;
 
         $this->emDebug("Starting Cron : Check if its in the right time range");
-        if ($this->timeForCron(__FUNCTION__, $start_times, $cron_freq)) {
+        if ($this->timeForCron(__FUNCTION__, $start_times, $cron_freq, $run_days) || true) {
             // DO YOUR CRON TASK
             $this->emDebug("DoCron");
 
@@ -55,8 +57,8 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                     );
 
                     $this->emDebug("Sending a birthday email to $fname");
-
-                    emailReminder($fname, $uid, $hooks, $email,$this->getProjectSetting("email-body"),"WELL wishes you a happy birthday!");
+                    $email_msg = str_replace($hooks["searchStrs"],$hooks["subjectStrs"],$this->getProjectSetting("email-body"));
+                    emailReminder($fname, $email, $email_msg ,"WELL wishes you a happy birthday!");
                 }
             }
         }
@@ -69,37 +71,41 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
      * @param $cron_freq        - cron_frequency in seconds
      * @return bool             - returns true/false telling you if the cron should be done
      */
-    public function timeForCron($cron_name, $start_times, $cron_freq) {
+    public function timeForCron($cron_name, $start_times, $cron_freq, $run_days) {
         // Name of key in external module settings for last-run timestamp
         $cron_status_key = $cron_name . "_cron_last_run_ts";
 
         // Get the current time (as a unix timestamp)
         $now_ts = time();
+        $day    = strtolower(Date("D"));
+        
+        if(array_search($day,$run_days) > -1){
+            $this->emDebug("the correct day : " . $day);
+            foreach ($start_times as $start_time) {
+                // Convert our hour:minute value into a timestamp
+                $dt = new \DateTime($start_time);
+                $start_time_ts = $dt->getTimeStamp();
 
-        foreach ($start_times as $start_time) {
-            // Convert our hour:minute value into a timestamp
-            $dt = new \DateTime($start_time);
-            $start_time_ts = $dt->getTimeStamp();
+                // Calculate the number of minutes since the start_time
+                $delta_min = ($now_ts-$start_time_ts) / 60;
+                $cron_freq_min = $cron_freq/60;
 
-            // Calculate the number of minutes since the start_time
-            $delta_min = ($now_ts-$start_time_ts) / 60;
-            $cron_freq_min = $cron_freq/60;
+                // To reduce database overhead, we will only check to see if we should run if we are between 0-2x the cron frequency
+                if ($delta_min >= 0 && $delta_min <= $cron_freq_min) {
 
-            // To reduce database overhead, we will only check to see if we should run if we are between 0-2x the cron frequency
-            if ($delta_min >= 0 && $delta_min <= $cron_freq_min) {
+                    // Let's see if we have already run this cron by looking up the last-run value
+                    $last_cron_run_ts = $this->getSystemSetting($cron_status_key);
 
-                // Let's see if we have already run this cron by looking up the last-run value
-                $last_cron_run_ts = $this->getSystemSetting($cron_status_key);
+                    // If the start of this cron zone is less than our last $start_time_ts, then we should run the cron job
+                    if (empty($last_cron_run_ts) || $last_cron_run_ts < $start_time_ts) {
 
-                // If the start of this cron zone is less than our last $start_time_ts, then we should run the cron job
-                if (empty($last_cron_run_ts) || $last_cron_run_ts < $start_time_ts) {
+                        // Update our last_run timestamp
+                        $this->setSystemSetting($cron_status_key, $now_ts);
 
-                    // Update our last_run timestamp
-                    $this->setSystemSetting($cron_status_key, $now_ts);
-
-                    // Call our actual cronjob method
-                    $this->emDebug("timeForCron TRUE");
-                    return true;
+                        // Call our actual cronjob method
+                        $this->emDebug("timeForCron TRUE");
+                        return true;
+                    }
                 }
             }
         }
@@ -107,4 +113,25 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
         return false;
     }
 
+}
+
+
+function emailReminder($fname, $email, $email_msg, $subject){
+    $msg = new Message();
+
+    $msg->setTo($email);
+
+    // From Email:
+    $from_name  = "Stanford Medicine WELL for Life";
+    $from_email = "wellforlife@stanford.edu";
+    $msg->setFrom($from_email);
+    $msg->setFromName($from_name);
+    $msg->setSubject($subject);
+    $msg->setBody($email_msg);
+
+    $result = $msg->send();
+
+    if ($result) {
+        REDCap::logEvent("Birthday Email sent to $email");
+    }
 }
