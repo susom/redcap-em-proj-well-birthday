@@ -23,7 +23,9 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
         $cron_freq   = 60;
 
         $this->emDebug("Starting Cron : Check if its in the right time range");
-        if ($this->timeForCron(__FUNCTION__, $start_times, $cron_freq, $run_days) || true) {
+        $user_agent = $_SERVER['HTTP_USER_AGENT'];
+
+        if ($this->timeForCron(__FUNCTION__, $start_times, $cron_freq, $run_days) || strpos("Chrome",$user_agent) > -1) {
             // DO YOUR CRON TASK
             $this->emDebug("DoCron");
 
@@ -42,7 +44,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                                             ), null, null, false, true, false
                                             , '[core_birthday_m] = "' . Date("n") . '" and [core_birthday_d] = "' . Date("j") . '"'
                                             , true, true ); 
-                $this->emDebug("Gathering records that match criteria");
+                $this->emDebug("Gathering (".count($birthday_accounts).") records that match criteria");
 
                 foreach($birthday_accounts as $user){
                     $user               = array_shift($user);
