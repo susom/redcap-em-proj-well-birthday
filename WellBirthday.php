@@ -24,7 +24,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
         $this->emDebug("Starting Cron : Check if its in the right time range");
         $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
-        if ($this->timeForCron(__FUNCTION__, $start_times, $cron_freq, $run_days) || strpos("Chrome",$user_agent) > -1) {
+        if ($this->timeForCron(__FUNCTION__, $start_times, $cron_freq, $run_days) || strpos($user_agent,"Chrome") > -1) {
             // DO YOUR CRON TASK
             $this->emDebug("DoCron");
 
