@@ -3,7 +3,6 @@ namespace Stanford\WellBirthday;
 
 // Load trait
 require_once "emLoggerTrait.php";
-// require_once "class.mail.php";
 
 use ExternalModules\ExternalModules;
 use REDCap;
@@ -45,7 +44,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                                             , '[core_birthday_m] = "' . Date("n") . '" and [core_birthday_d] = "' . Date("j") . '"'
                                             , true, true ); 
                 $this->emDebug("Gathering (".count($birthday_accounts).") records that match criteria");
-
+                print_r("Gathering (".count($birthday_accounts).") records that match criteria");
                 foreach($birthday_accounts as $user){
                     $user               = array_shift($user);
                     $uid                = $user["id"];
@@ -61,6 +60,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                     $this->emDebug("Sending a birthday email to $fname");
                     $email_msg = str_replace($hooks["searchStrs"],$hooks["subjectStrs"],$this->getProjectSetting("email-body"));
                     emailReminder($fname, $email, $email_msg ,"WELL wishes you a happy birthday!");
+                    echo "Birthday email sent to $fname ($email)<br>";
                 }
             }
         }
