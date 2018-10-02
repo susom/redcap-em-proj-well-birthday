@@ -32,11 +32,13 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
 
             $db_enabled = ExternalModules::getEnabledProjects($this->PREFIX);
 
+            echo "<pre>";
+
             while ($proj = db_fetch_assoc($db_enabled)) {
-                $pid = $proj['project_id'];
+                $pid = $proj_id = $project_id = $proj['project_id'];
                 $this->emDebug("Processing " . $pid);
 
-                $birthday_accounts = REDCap::getData('array', null, array('id'
+                $birthday_accounts = REDCap::getData($pid,'array', null, array('id'
                                             ,'core_birthday_m'
                                             ,'core_birthday_d'
                                             ,'portal_firstname'
