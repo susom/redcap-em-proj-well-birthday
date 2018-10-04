@@ -34,6 +34,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
 
             echo "<pre>";
 
+            $sent_emails = array();            
             while ($proj = db_fetch_assoc($db_enabled)) {
                 $pid = $proj_id = $project_id = $proj['project_id'];
                 $this->emDebug("Processing " . $pid);
@@ -48,7 +49,8 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                                             , '[core_birthday_m] = "' . Date("n") . '" and [core_birthday_d] = "' . Date("j") . '"'
                                             , true, true ); 
                 $this->emDebug("Gathering (".count($birthday_accounts).") records that match criteria");
-                print_r("Gathering (".count($birthday_accounts).") records that match criteria<br><br>");
+                
+                print_r("Gathering (".count($birthday_accounts).") records that match criteria for project $pid<br><br>");
                 
                 foreach($birthday_accounts as $user){
                     $user               = array_shift($user);
@@ -57,15 +59,18 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                     $fname              = $user["portal_firstname"];
                     $lname              = $user["portal_lastname"];
                     
-                    $hooks  = array(
-                     "searchStrs" => array("#FIRSTNAME#","\r","\n"),
-                     "subjectStrs" => array($fname,"<br>","<br>")
-                    );
+                    if(!in_array($email,$sent_emails)){
+                        $sent_emails[] = $email;
+                        $hooks  = array(
+                         "searchStrs" => array("#FIRSTNAME#","\r","\n"),
+                         "subjectStrs" => array($fname,"<br>","<br>")
+                        );
 
-                    $this->emDebug("Sending a birthday email to $fname");
-                    $email_msg = str_replace($hooks["searchStrs"],$hooks["subjectStrs"],$this->getProjectSetting("email-body"));
-                    emailReminder($fname, $email, $email_msg ,"WELL wishes you a happy birthday!");
-                    echo "Birthday email sent to $fname ($email)<br>";
+                        $this->emDebug("Sending a birthday email to $fname");
+                        $email_msg = str_replace($hooks["searchStrs"],$hooks["subjectStrs"],$this->getProjectSetting("email-body"));
+                        emailReminder($fname, $email, $email_msg ,"WELL wishes you a happy birthday!");
+                        echo "Birthday email sent to $fname ($email)<br>";
+                    }
                 }
             }
         }
