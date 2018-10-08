@@ -17,7 +17,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
      * This is the cron task specified in the config.json
      */
     public function startCron() {
-        $start_times = array("08:00");
+        $start_times = array("15:20");
         $run_days    = array("mon","tue","wed","thu","fri","sat","sun");
         $cron_freq   = 60;
 
@@ -91,7 +91,12 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
         $now_ts = time();
         $day    = strtolower(Date("D"));
         
+        $this->emDebug("The days is " . $day);
+        echo("The days is " . $day);
+
+
         if(array_search($day,$run_days) > -1){
+            echo("today is ok to run this");
             $this->emDebug("the correct day : " . $day);
             foreach ($start_times as $start_time) {
                 // Convert our hour:minute value into a timestamp
