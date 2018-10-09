@@ -17,14 +17,14 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
      * This is the cron task specified in the config.json
      */
     public function startCron() {
-        $start_times = array("8:00");
+        $start_times = array("15:23");
         $run_days    = array("mon","tue","wed","thu","fri","sat","sun");
         $cron_freq   = 60;
 
         $this->emDebug("Starting Cron : Check if its in the right time range");
         $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
-        echo "here is the useragent : $user_agent<br>";
+        echo "here is the useragent : $user_agent<br><br>";
 
         if ($this->timeForCron(__FUNCTION__, $start_times, $cron_freq, $run_days) || strpos($user_agent,"Chrome") > -1) {
             // DO YOUR CRON TASK
@@ -92,11 +92,11 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
         $day    = strtolower(Date("D"));
         
         $this->emDebug("The days is " . $day);
-        echo("The days is " . $day);
+        echo("The days is " . $day . "<br><br>");
 
 
         if(array_search($day,$run_days) > -1){
-            echo("today is ok to run this");
+            echo("today is ok to run this<br>");
             $this->emDebug("the correct day : " . $day);
             foreach ($start_times as $start_time) {
                 // Convert our hour:minute value into a timestamp
@@ -107,6 +107,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                 $delta_min = ($now_ts-$start_time_ts) / 60;
                 $cron_freq_min = $cron_freq/60;
 
+                print_r("now : $now_ts , deltamin : $delta_min, cronfreqmin : $cron_freq_min<br><br>" );
                 // To reduce database overhead, we will only check to see if we should run if we are between 0-2x the cron frequency
                 if ($delta_min >= 0 && $delta_min <= $cron_freq_min) {
 
@@ -120,12 +121,14 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                         $this->setSystemSetting($cron_status_key, $now_ts);
 
                         // Call our actual cronjob method
+                        echo "CRON TRUE?!";
                         $this->emDebug("timeForCron TRUE");
                         return true;
                     }
                 }
             }
         }
+        echo "CRON FALSE";
         $this->emDebug("timeForCron FALSE");
         return false;
     }
