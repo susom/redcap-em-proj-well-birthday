@@ -17,7 +17,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
      * This is the cron task specified in the config.json
      */
     public function startCron() {
-        $start_times = array("15:23");
+        $start_times = array("15:30");
         $run_days    = array("mon","tue","wed","thu","fri","sat","sun");
         $cron_freq   = 60;
 
