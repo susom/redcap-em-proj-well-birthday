@@ -17,9 +17,11 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
      * This is the cron task specified in the config.json
      */
     public function startCron() {
-        $start_times = array("15:30","15:45");
+        $this->emDebug("Cron Args",func_get_args());
+
+        $start_times = array("10:00");
         $run_days    = array("mon","tue","wed","thu","fri","sat","sun");
-        $cron_freq   = 60;
+        $cron_freq   = 300;
 
         $this->emDebug("Starting Cron : Check if its in the right time range");
         $user_agent = $_SERVER['HTTP_USER_AGENT'];
