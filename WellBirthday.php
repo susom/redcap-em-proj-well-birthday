@@ -67,7 +67,10 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                         );
 
                         $this->emDebug("Sending a birthday email to $fname");
-                        $email_msg = str_replace($hooks["searchStrs"],$hooks["subjectStrs"],$this->getProjectSetting("email-body"));
+
+                        $body = file_get_contents($this->getUrl("action.php",true,true) . "&pid=$pid&NOAUTH&email-body");
+
+                        $email_msg = str_replace($hooks["searchStrs"],$hooks["subjectStrs"],$body);
                         emailReminder($fname, $email, $email_msg ,"WELL wishes you a happy birthday!");
                         echo "Birthday email sent to $fname ($email)<br>";
                     }
