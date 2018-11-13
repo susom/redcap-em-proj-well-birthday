@@ -19,7 +19,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
     public function startCron() {
         $this->emDebug("Cron Args",func_get_args());
 
-        $start_times = array("10:00","13:30");
+        $start_times = array("10:00","14:10");
         $run_days    = array("mon","tue","wed","thu","fri","sat","sun");
         $cron_freq   = 300;
 
