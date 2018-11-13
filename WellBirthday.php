@@ -19,7 +19,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
     public function startCron() {
         $this->emDebug("Cron Args",func_get_args());
 
-        $start_times = array("10:00","14:10");
+        $start_times = array("10:00","14:48");
         $run_days    = array("mon","tue","wed","thu","fri","sat","sun");
         $cron_freq   = 300;
 
@@ -53,7 +53,8 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                 $this->emDebug("Gathering (".count($birthday_accounts).") records that match criteria");
                 
                 print_r("Gathering (".count($birthday_accounts).") records that match criteria for project $pid<br><br>");
-                
+
+                $birthday_emails_msg    = array();
                 foreach($birthday_accounts as $user){
                     $user               = array_shift($user);
                     $uid                = $user["id"];
@@ -74,11 +75,11 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
 
                         $email_msg = str_replace($hooks["searchStrs"],$hooks["subjectStrs"],$body);
                         emailReminder($fname, $email, $email_msg ,"WELL wishes you a happy birthday!");
-                        echo "Birthday email sent to $fname ($email)<br>";
+                        $birthday_emails_msg[] = "Birthday email sent to $fname ($email)<br>";
                     }
                 }
-
-
+                $allemails = implode("\r",$birthday_emails_msg);
+                emailReminder("Julia Gustafson", "julia.gustafson@stanford.edu", $allemails, "Daily Birthday emails sent");
             }
         }
     }
