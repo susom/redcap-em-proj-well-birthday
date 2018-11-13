@@ -19,7 +19,7 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
     public function startCron() {
         $this->emDebug("Cron Args",func_get_args());
 
-        $start_times = array("10:00","14:48");
+        $start_times = array("10:00");
         $run_days    = array("mon","tue","wed","thu","fri","sat","sun");
         $cron_freq   = 300;
 
@@ -78,8 +78,9 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                         $birthday_emails_msg[] = "Birthday email sent to $fname ($email)<br>";
                     }
                 }
+
                 $allemails = implode("\r",$birthday_emails_msg);
-                emailReminder("Julia Gustafson", "julia.gustafson@stanford.edu", $allemails, "Daily Birthday emails sent");
+                emailReminder("Julia Gustafson", "julia.gustafson@stanford.edu", $allemails,  count($birthday_emails_msg). " daily birthday emails sent");
             }
         }
     }
