@@ -81,6 +81,8 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
 
                 $allemails = implode("\r",$birthday_emails_msg);
                 emailReminder("Julia Gustafson", "julia.gustafson@stanford.edu", $allemails,  count($birthday_emails_msg). " daily birthday emails sent");
+                emailReminder("Irvin Szeto", "irvins@stanford.edu", $allemails,  count($birthday_emails_msg). " daily birthday emails sent");
+
             }
         }
     }
