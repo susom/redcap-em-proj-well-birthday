@@ -48,7 +48,11 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
                                             ,'portal_lastname'
                                             ,'portal_email'
                                             ), null, null, false, true, false
-                                            , '[core_birthday_m] = "' . Date("n") . '" and [core_birthday_d] = "' . Date("j") . '"'
+                                            , '[core_birthday_m] = "' . Date("n") . '" 
+                                            AND [core_birthday_d] = "' . Date("j") . '"
+                                            AND [portal_unsubscribe] != 1    
+                                            AND [user_test_data] != 1   
+                                            AND [portal_undeliverable_email] != 1'
                                             , true, true ); 
                 $this->emDebug("Gathering (".count($birthday_accounts).") records that match criteria");
                 
@@ -81,8 +85,6 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
 
                 $allemails = implode("\r",$birthday_emails_msg);
                 emailReminder("Julia Gustafson", "julia.gustafson@stanford.edu", $allemails,  count($birthday_emails_msg). " daily birthday emails sent");
-                emailReminder("Irvin Szeto", "irvins@stanford.edu", $allemails,  count($birthday_emails_msg). " daily birthday emails sent");
-
             }
         }
     }
