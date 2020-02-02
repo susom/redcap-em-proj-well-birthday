@@ -37,7 +37,8 @@ class WellBirthday extends \ExternalModules\AbstractExternalModule
             echo "<pre>";
 
             $sent_emails = array();            
-            while ($proj = db_fetch_assoc($db_enabled)) {
+            //while ($proj = db_fetch_assoc($db_enabled)) {
+            while($proj = $db_enabled->fetch_assoc()){
                 $pid = $proj_id = $project_id = $proj['project_id'];
                 $this->emDebug("Processing " . $pid);
 
